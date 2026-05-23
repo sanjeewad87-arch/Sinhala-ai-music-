@@ -19,12 +19,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Initialize Flutter Project
+      - name: Find and Fix main.dart Location
         run: |
           mkdir -p lib
-          if [ -f main.dart ]; then
-            mv main.dart lib/main.dart
+          # ප්‍රොජෙක්ට් එක ඇතුළේ main.dart තියෙන ඕනෑම තැනක් හොයලා ඒක lib එකට කොපි කරනවා
+          MAIN_PATH=$(find . -name "main.dart" -print -quit)
+          if [ -n "$MAIN_PATH" ]; then
+            echo "Found main.dart at $MAIN_PATH"
+            cp "$MAIN_PATH" lib/main.dart
           else
+            echo "main.dart not found, creating a default one"
             echo 'import "package:flutter/material.dart"; void main() { runApp(MaterialApp(home: Scaffold(body: Center(child: Text("Sinhala AI Music"))))); }' > lib/main.dart
           fi
           flutter create . --force
